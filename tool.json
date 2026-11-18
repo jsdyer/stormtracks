@@ -1,12 +1,21 @@
 {
-  "id": "coolcode-tool-template",
-  "title": "CoolCode Tool Starter",
-  "description": "A browser-only example that trims lines and removes exact duplicates.",
-  "category": "security",
-  "tags": ["text", "lines", "duplicates"],
-  "icon": "scan-search",
-  "url": "/coolcode-tool-template/",
-  "source": "https://github.com/jsdyer/coolcode-tool-template",
+  "id": "stormtracks",
+  "title": "Storm Tracks",
+  "description": "Replay Atlantic storms, compare their winds and find historical tracks near a coastal community.",
+  "category": "places",
+  "tags": [
+    "Atlantic",
+    "hurricanes",
+    "NOAA",
+    "Nova Scotia",
+    "Halifax",
+    "weather",
+    "cyclones",
+    "IBTrACS"
+  ],
+  "icon": "map",
+  "url": "/stormtracks/",
+  "source": "https://github.com/jsdyer/stormtracks",
   "hosting": "project",
   "access": "browser"
 }

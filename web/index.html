@@ -1,33 +1,36 @@
 <!doctype html>
-<html lang="en-CA">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="{{DESCRIPTION}}">
-  <title>{{TITLE}} · CoolCode</title>
-  <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./app.mjs"></script>
-</head>
-<body data-tool-id="{{TOOL_ID}}">
-  <a class="skip" href="#main">Skip to content</a>
-  <header><a href="https://coolcode.ca/">← CoolCode.ca</a><a href="{{SOURCE_URL}}">Source &amp; instructions ↗</a></header>
-  <main id="main">
-    <p class="eyebrow">Browser tool starter</p>
-    <h1>{{TITLE}}</h1>
-    <p class="intro">{{DESCRIPTION}}</p>
-    <section aria-labelledby="example-title">
-      <h2 id="example-title">Clean a list</h2>
-      <p>Trim spaces, skip blank lines and remove exact duplicates. Capitalization stays distinct.</p>
-      <div class="panels">
-        <div><label for="input">Your lines</label><textarea id="input" rows="10" maxlength="100000" spellcheck="false" placeholder="Paste one item per line"></textarea></div>
-        <div><label for="output">Cleaned lines</label><textarea id="output" rows="10" readonly spellcheck="false"></textarea></div>
-      </div>
-      <div class="actions"><button id="sample" type="button">Load example</button><button id="clear" type="button">Clear</button><button id="copy" type="button" hidden>Copy result</button></div>
-      <p id="status" role="status" aria-live="polite">Paste a list to begin.</p>
-      <noscript><p>This tool needs JavaScript to process your text. The source is available above.</p></noscript>
-    </section>
-    <aside aria-label="Privacy"><strong>Stays on your device.</strong> This example makes no API requests and does not save your text. Reloading clears it.</aside>
-  </main>
-  <footer>Part of <a href="https://coolcode.ca/">the CoolCode collection</a>.</footer>
-</body>
-</html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{TITLE}} · CoolCode</title><meta name="description" content="{{DESCRIPTION}}">
+<meta name="theme-color" content="#112f40"><link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./vendor/leaflet.css"><link rel="stylesheet" href="./style.css">
+<script src="./vendor/leaflet.js" defer></script><script type="module" src="./app.mjs"></script></head>
+<body data-tool="{{TOOL_ID}}"><a class="skip" href="#explorer">Skip to explorer</a>
+<header><div class="wrap top"><a href="https://coolcode.ca/">← CoolCode</a><a href="#sources">Sources &amp; coverage</a></div></header>
+<main class="wrap">
+<div class="intro"><div><p class="kicker">North Atlantic · Historical cyclone atlas</p><h1>{{TITLE}}</h1><p>Follow a storm across the Atlantic, compare its intensity, or find the tracks that passed closest to home.</p></div>
+<div class="count"><strong id="total">…</strong><span>archived storm tracks</span><small id="years">NOAA IBTrACS v04r01</small></div></div>
+<p role="status" id="loading">Loading the Atlantic archive…</p>
+<div id="explorer" class="layout" hidden>
+<aside class="panel search-panel"><h2>Find a track</h2>
+<label for="query">Storm name, season or ID</label><input type="search" id="query" placeholder="Try Juan, Fiona or 2003">
+<div class="fields"><div><label for="place">Search centre</label><select id="place"></select></div><div><label for="radius">Distance</label><select id="radius"><option value="100">100 km</option><option value="250" selected>250 km</option><option value="500">500 km</option><option value="1000">1,000 km</option><option value="all">Whole basin</option></select></div></div>
+<button type="button" id="pick" aria-pressed="false">Choose a point on the map</button>
+<details><summary>Enter coordinates</summary><form id="coordinates"><div class="fields"><label>Latitude<input id="lat" type="number" step="any" min="-90" max="90" required></label><label>Longitude<input id="lon" type="number" step="any" min="-180" max="180" required></label></div><button>Use coordinates</button></form></details>
+<p class="muted" id="results-count" role="status"></p><div id="results" class="results"></div><button id="more" hidden>Show more tracks</button></aside>
+<section class="viewer"><div class="panel chart-panel"><div class="titlebar"><div><p class="kicker">Selected track</p><h2 id="selected"></h2></div><button id="fit">Fit track</button></div>
+<div class="mapbox"><div id="map" aria-label="Storm track map with pan and zoom"></div></div>
+<div class="legend"><span><i></i>Selected track</span><span id="compare-key" hidden><i class="dash"></i>Comparison</span><span id="map-place"></span></div>
+<div class="transport"><button id="play">Play track</button><label for="frame" class="sr">Track position</label><input type="range" id="frame" min="0" value="0"><output for="frame" id="frame-count"></output></div>
+<div class="readout"><strong id="timestamp"></strong><span id="conditions"></span></div>
+</div>
+<section class="panel intensity"><div class="titlebar"><h2>Wind history</h2><small>kt · elapsed days</small></div>
+<label for="compare">Compare with another track</label><select id="compare"></select>
+<svg id="chart" role="img" aria-label="Recorded sustained wind by elapsed days. Summary figures follow." viewBox="0 0 640 170"></svg>
+<div class="table-wrap"><table><thead><tr><th>Track</th><th>Peak wind</th><th>Lowest pressure</th><th>Closest approach*</th></tr></thead><tbody id="summary"></tbody></table></div>
+<p id="footnote" class="muted"></p><a href="https://coolcode.ca/weatherarchive/">Explore Canadian station observations in Weather Archive ↗</a>
+</section></section></div>
+<section class="panel sources" id="sources"><h2>Inside the record</h2><p id="coverage"></p>
+<p>Tracks follow IBTrACS primary centres in the North Atlantic. The archive includes unnamed and post-tropical stages. Earlier records have sparser coverage. Short links between positions approximate the path, with breaks for gaps longer than 12 hours. Nearby results measure distance to the track centre. Wind, rain, surge and damage can extend far beyond it.</p>
+<p>Winds use the US agency one-minute sustained estimate in knots, and pressure is in hPa (numerically equal to millibars). A dash marks an unreported value. IBTrACS may interpolate between agency fixes. The chart compares elapsed time from each track’s first included position.</p>
+<p><a href="https://www.ncei.noaa.gov/products/international-best-track-archive">NOAA archive</a> · <a href="https://doi.org/10.25921/82ty-9e16">Dataset citation</a> · <a href="https://www.ncei.noaa.gov/sites/default/files/2025-09/IBTrACS_v04r01_column_documentation.pdf">Column guide</a> · <a href="https://www.naturalearthdata.com/">Natural Earth coastline</a> · <a href="{{SOURCE_URL}}">Source code</a></p>
+<p class="muted">Archive dates and search coordinates stay in your browser. All map and storm files are served by CoolCode. Application build <time>{{BUILD_DATE}}</time> UTC.</p></section>
+</main></body></html>

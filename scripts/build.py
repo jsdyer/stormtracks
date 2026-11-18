@@ -2,6 +2,8 @@
 """Build a browser tool using Python's standard library; no network required."""
 from html import escape
 import json
+import gzip
+from datetime import datetime, timezone
 from pathlib import Path
 import re
 import shutil
@@ -43,6 +45,18 @@ def build(root=ROOT):
     with tempfile.TemporaryDirectory(prefix="coolcode-tool-") as temporary:
         stage = Path(temporary) / "site"
         shutil.copytree(web, stage)
+        for archive in (stage / "data").glob("*.json.gz"):
+            archive.with_suffix("").write_bytes(gzip.decompress(archive.read_bytes()))
+            archive.unlink()
+        snapshot = json.loads((stage / "data/tracks.json").read_text())["retrieved"]
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", snapshot):
+            raise ValueError("Invalid snapshot retrieval date")
+        date_label = f"Data retrieved · {snapshot}"
+        (stage / "data-date.svg").write_text(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="180" height="23" role="img">'
+            f'<title>{date_label}</title><rect width="180" height="23" rx="4" fill="#e8eeeb"/>'
+            f'<text x="7" y="16" fill="#254653" font-family="sans-serif" font-size="13">{date_label}</text></svg>'
+        )
         index = stage / "index.html"
         page = index.read_text(encoding="utf-8")
         for token, key in {"TITLE": "title", "DESCRIPTION": "description", "TOOL_ID": "id", "SOURCE_URL": "source"}.items():
@@ -50,6 +64,7 @@ def build(root=ROOT):
             if placeholder not in page:
                 raise ValueError(f"Missing template placeholder: {placeholder}")
             page = page.replace(placeholder, escape(tool[key], quote=True))
+        page = page.replace("{{BUILD_DATE}}", datetime.now(timezone.utc).date().isoformat())
         if re.search(r"\{\{[A-Z_]+\}\}", page):
             raise ValueError("Unresolved template placeholder in web/index.html")
         index.write_text(page, encoding="utf-8")

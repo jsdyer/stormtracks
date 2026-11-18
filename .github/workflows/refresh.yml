@@ -1,0 +1,49 @@
+name: Refresh North Atlantic archive
+on:
+  schedule:
+    - cron: '37 9 5 * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    outputs:
+      revision: ${{ steps.persist.outputs.revision }}
+      changed: ${{ steps.persist.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python3 scripts/refresh.py
+      - run: python3 -m unittest discover -s tests -v
+      - run: python3 scripts/build.py
+      - id: persist
+        run: |
+          git add web/data/tracks.json.gz
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Refresh NOAA North Atlantic archive"
+            git push origin HEAD:main
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+          echo "revision=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  publish:
+    needs: snapshot
+    if: needs.snapshot.outputs.changed == 'true'
+    uses: ./.github/workflows/pages.yml
+    with:
+      source_ref: ${{ needs.snapshot.outputs.revision }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
