@@ -33,6 +33,14 @@ class BuildTests(unittest.TestCase):
         self.assertFalse((self.root / "dist/private.txt").exists())
         self.assertTrue((self.root / "dist/.nojekyll").exists())
 
+    def test_catalogue_metadata_matches_the_published_snapshot(self):
+        build(self.root)
+        output = self.root / "dist"
+        status = json.loads((output / "data-status.json").read_text())
+        data = json.loads((output / "data/tracks.json").read_text())
+        self.assertEqual(status["retrieved"], data["retrieved"])
+        self.assertEqual(status["lastSeason"], max(storm["year"] for storm in data["storms"]))
+
     def test_url_matches_tool_id(self):
         self.edit(url="/different/")
         with self.assertRaises(ValueError): metadata(self.root)

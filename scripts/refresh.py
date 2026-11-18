@@ -73,8 +73,9 @@ def save(raw, updated, fetched, destination=OUTPUT):
         raise ValueError('Incomplete North Atlantic file')
     if existing and len(storms)<len(existing['storms'])*0.95:
         raise ValueError('Unexpected loss of archived storms')
-    if existing and existing['storms']==storms and existing['sha256']==digest:
-        print('Bundled source is current')
+    if (existing and existing['sha256'] == digest and existing['storms'] == storms
+            and existing['retrieved'] == fetched and existing['source_updated'] == updated):
+        print('This source was already retrieved today')
         return
     payload = dict(version='IBTrACS v04r01',source=URL,sha256=digest,source_updated=updated,
                    retrieved=fetched,positions=total,storms=storms)
