@@ -48,7 +48,12 @@ def build(root=ROOT):
         for archive in (stage / "data").glob("*.json.gz"):
             archive.with_suffix("").write_bytes(gzip.decompress(archive.read_bytes()))
             archive.unlink()
-        snapshot = json.loads((stage / "data/tracks.json").read_text())["retrieved"]
+        data = json.loads((stage / "data/tracks.json").read_text())
+        snapshot = data["retrieved"]
+        seasons = [storm["year"] for storm in data["storms"]]
+        status = {"retrieved": snapshot, "tracks": len(seasons), "positions": data["positions"],
+                  "firstSeason": min(seasons), "lastSeason": max(seasons), "sourceUpdated": data["source_updated"]}
+        (stage / "data-status.json").write_text(json.dumps(status) + "\n", encoding="utf-8")
         if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", snapshot):
             raise ValueError("Invalid snapshot retrieval date")
         date_label = f"Data retrieved · {snapshot}"
