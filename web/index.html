@@ -2,7 +2,8 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{{TITLE}} · CoolCode</title><meta name="description" content="{{DESCRIPTION}}">
 <meta name="theme-color" content="#112f40"><link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./vendor/leaflet.css"><link rel="stylesheet" href="./style.css">
-<script src="./vendor/leaflet.js" defer></script><script type="module" src="./app.mjs"></script></head>
+<script src="./vendor/leaflet.js" defer></script><script type="module" src="./app.mjs"></script><script defer src="/assets/tool-metrics.js" referrerpolicy="no-referrer"></script>
+</head>
 <body data-tool="{{TOOL_ID}}"><a class="skip" href="#explorer">Skip to explorer</a>
 <header><div class="wrap top"><a href="https://coolcode.ca/">← CoolCode</a><a href="#harbours">Harbour records</a><a href="#sources">Sources &amp; coverage</a></div></header>
 <main class="wrap">
@@ -49,4 +50,5 @@
 <p>Winds use the US agency one-minute sustained estimate in knots, and pressure is in hPa (numerically equal to millibars). A dash marks an unreported value. IBTrACS may interpolate between agency fixes. The chart compares elapsed time from each track’s first included position.</p>
 <p><a href="https://www.ncei.noaa.gov/products/international-best-track-archive">NOAA archive</a> · <a href="https://doi.org/10.25921/82ty-9e16">Dataset citation</a> · <a href="https://www.ncei.noaa.gov/sites/default/files/2025-09/IBTrACS_v04r01_column_documentation.pdf">Column guide</a> · <a href="https://www.naturalearthdata.com/">Natural Earth coastline</a> · <a href="{{SOURCE_URL}}">Source code</a></p>
 <p class="muted">Archive dates and search coordinates stay in your browser. All map and storm files are served by CoolCode. Application build <time>{{BUILD_DATE}}</time> UTC.</p></section>
-</main></body></html>
+</main><footer><p><a href="https://coolcode.ca/report/?tool=stormtracks" referrerpolicy="no-referrer">Report an issue</a></p></footer>
+</body></html>
