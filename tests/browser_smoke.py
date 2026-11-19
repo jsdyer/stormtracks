@@ -2,6 +2,7 @@
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+import json
 import os
 import shutil
 import tempfile
@@ -9,6 +10,23 @@ import threading
 from playwright.sync_api import sync_playwright, expect
 
 ROOT=Path(__file__).resolve().parents[1]
+windows = json.loads((ROOT / 'dist/data/harbours.json').read_text())['storms']
+
+
+def check_gauge_table(page, storm_id):
+    for i, station in enumerate(windows[storm_id]['stations']):
+        row = page.locator('#harbour-readings tr').nth(i)
+        values = [v for v in station['differences'] if v is not None]
+        expect(row.locator('th')).to_have_text(station['label'])
+        expect(row.locator('td').nth(2)).to_have_text(f"{len(values)} / {len(station['differences'])}")
+        if values:
+            peak = max(values)
+            displayed = ('+' if peak > 0 else '') + f'{peak:.3f} m'
+            expect(row.locator('td').nth(1)).to_contain_text(displayed)
+        else:
+            expect(row.locator('td').nth(1)).to_have_text('Unavailable')
+
+
 class Quiet(SimpleHTTPRequestHandler):
     def log_message(self,*args):pass
 
@@ -25,9 +43,7 @@ with tempfile.TemporaryDirectory() as directory:
             page.goto(url)
             expect(page.locator('#selected')).to_contain_text('Juan')
             expect(page.locator('#results button')).not_to_have_count(0)
-            expect(page.locator('#harbour-readings')).to_contain_text('+0.634 m')
-            expect(page.locator('#harbour-readings')).to_contain_text('+1.573 m')
-            expect(page.locator('#harbour-readings')).to_contain_text('0 / 193')
+            check_gauge_table(page, '2022257N16312')
             page.locator('#harbour-time').fill('0')
             expect(page.locator('#harbour-instant')).to_have_text('2022-09-23 00:00 UTC')
             page.locator('#compare').select_option('2022257N16312')
@@ -43,7 +59,7 @@ with tempfile.TemporaryDirectory() as directory:
             page.locator('#results button').click()
             expect(page.locator('#selected')).to_contain_text('Dorian')
             expect(page.locator('#harbour-event')).to_have_value('2019236N10314')
-            expect(page.locator('#harbour-readings')).to_contain_text('+1.377 m')
+            check_gauge_table(page, '2019236N10314')
             assert 'storm=2019236N10314' in page.url
             page.reload();expect(page.locator('#selected')).to_contain_text('Dorian')
             page.locator('#place').select_option('Sydney');expect(page.locator('#map-place')).to_contain_text('Sydney')
