@@ -1,3 +1,5 @@
+import {enableHarbours} from './harbours.mjs';
+let followHarbour = () => {};
 import {ports, closestKm, distanceKm, paths, maxGapMinutes, stats, label, matches, stage, dateTime} from './model.mjs';
 
 const $ = id => document.getElementById(id);
@@ -99,6 +101,7 @@ function setFrame(next) {
 function selectStorm(storm) {
   stopPlayback();
   active=storm;
+  followHarbour(storm.id);
   if(compare?.id===active.id) compare=null;
   $('selected').textContent=label(storm);
   for(const opt of $('compare').options) opt.disabled=opt.value===storm.id;
@@ -190,6 +193,15 @@ try {
   $('loading').hidden=true;$('explorer').hidden=false;
   for(const place of ports) $('place').append(option(place.name,place.name));
   const custom=option('custom','Custom point');custom.disabled=true;$('place').append(custom);
+  loadJSON('harbours').then(snapshot => {
+    followHarbour = enableHarbours(snapshot, id => {
+      if (byId.has(id)) {
+        selectStorm(byId.get(id));
+        $('selected').scrollIntoView({block:'center'});
+      }
+    });
+    if (active) followHarbour(active.id);
+  }).catch(() => { $('harbour-error').hidden = false; });
   const sorted=[...archive.storms].sort((a,b)=>a.name.localeCompare(b.name)||b.year-a.year||a.id.localeCompare(b.id));
   $('compare').append(option('','Choose a second storm…'),...sorted.map(s=>option(s.id,label(s))));
   makeMap(land);events();setCentre(ports[0]);

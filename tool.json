@@ -1,7 +1,7 @@
 {
   "id": "stormtracks",
   "title": "Storm Tracks",
-  "description": "Replay Atlantic storms, compare their winds and find historical tracks near a coastal community.",
+  "description": "Replay Atlantic storm tracks and compare how high the water rose above predicted tides during Fiona and Dorian.",
   "category": "places",
   "tags": [
     "Atlantic",
@@ -17,5 +17,53 @@
   "url": "/stormtracks/",
   "source": "https://github.com/jsdyer/stormtracks",
   "hosting": "project",
-  "access": "browser"
+  "access": "browser",
+  "data_info": {
+    "mode": "snapshot",
+    "detail": "NOAA tracks describe storm positions and winds. Canadian Hydrographic Service gauges show measured water levels alongside tide predictions.",
+    "cadence": "Monthly",
+    "probes": [
+      {
+        "url": "https://coolcode.ca/stormtracks/data-status.json",
+        "path": [
+          "retrieved"
+        ],
+        "label": "Tracks retrieved",
+        "value": "2026-11-18",
+        "count_at": {
+          "path": [
+            "tracks"
+          ],
+          "unit": "storm tracks"
+        },
+        "count": 2275
+      },
+      {
+        "url": "https://coolcode.ca/stormtracks/data-status.json",
+        "path": [
+          "firstSeason"
+        ],
+        "label": "Seasons",
+        "end_path": [
+          "lastSeason"
+        ],
+        "value": "1851–2025"
+      },
+      {
+        "url": "https://coolcode.ca/stormtracks/data-status.json",
+        "path": [
+          "harboursRetrieved"
+        ],
+        "label": "Harbour data retrieved",
+        "value": "2026-11-19",
+        "count_at": {
+          "path": [
+            "harbourWindows"
+          ],
+          "unit": "storm windows"
+        },
+        "count": 2
+      }
+    ]
+  }
 }

@@ -17,7 +17,7 @@ SLUG = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 def metadata(root=ROOT):
     tool = json.loads((root / "tool.json").read_text(encoding="utf-8"))
     required = {"id", "title", "description", "category", "tags", "icon", "url", "source", "hosting", "access"}
-    if not isinstance(tool, dict) or set(tool) != required:
+    if not isinstance(tool, dict) or not required <= set(tool) <= required | {"data_info"}:
         raise ValueError("tool.json has missing or unknown fields")
     for key in required - {"tags"}:
         if not isinstance(tool[key], str) or not tool[key].strip():
@@ -51,7 +51,9 @@ def build(root=ROOT):
         data = json.loads((stage / "data/tracks.json").read_text())
         snapshot = data["retrieved"]
         seasons = [storm["year"] for storm in data["storms"]]
-        status = {"retrieved": snapshot, "tracks": len(seasons), "positions": data["positions"],
+        harbours = json.loads((stage / "data/harbours.json").read_text())
+        status = {"harboursRetrieved": harbours["retrieved"], "harbourWindows": len(harbours["storms"]),
+                  "retrieved": snapshot, "tracks": len(seasons), "positions": data["positions"],
                   "firstSeason": min(seasons), "lastSeason": max(seasons), "sourceUpdated": data["source_updated"]}
         (stage / "data-status.json").write_text(json.dumps(status) + "\n", encoding="utf-8")
         if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", snapshot):

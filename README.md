@@ -6,6 +6,16 @@ Replay North Atlantic cyclone tracks, compare their sustained winds and estimate
 
 The first snapshot covers 2,275 storms and 126,132 positions from 1851–2025. Storm Tracks starts on Juan in 2003. Play the timeline or step through in UTC, compare a second storm on the map and the elapsed-days wind chart, and open Weather Archive for Canadian station observations. The URL remembers selected storm IDs. Searches and map coordinates stay in the browser. All maps and records load from this site.
 
+<!-- coolcode:guide -->
+Move through a 48-hour storm window to compare the same quarter hour at each gauge and see how many readings support each peak.
+<!-- /coolcode:guide -->
+
+## Comparing harbour water levels
+
+Choose Fiona or Dorian in **Water levels during the storm**. The slider advances all three stations together at 15-minute intervals. Each 48-hour UTC window includes both endpoints (193 possible comparisons). A station peak is the largest positive or least-negative observed-minus-predicted difference among matched points in that window. Each station peaks independently. Missing observations stay unavailable. An empty series cannot establish the height of the water or the storm's local effects.
+
+The collector matches CHS IWLS observations (`wlo`, quality code 1) to astronomical tide predictions (`wlp`) at identical UTC timestamps, then stores the derived difference in metres. It does not interpolate. The difference can reflect several physical processes. It is a station measurement and does not give street-level flood depth. The [CHS web service](https://tides.gc.ca/en/web-services-offered-canadian-hydrographic-service) supplies these series under a [non-commercial licence](https://tides.gc.ca/en/licence-agreement). Commercial reuse requires separate permission. CHS attribution appears beside the comparison. Run `python3 scripts/harbours.py` to refresh these records alongside the monthly NOAA check.
+
 ## Sources and interpretation
 
 - NOAA National Centers for Environmental Information, International Best Track Archive for Climate Stewardship v04r01, [DOI 10.25921/82ty-9e16](https://doi.org/10.25921/82ty-9e16). [Archive](https://www.ncei.noaa.gov/products/international-best-track-archive), [North Atlantic CSV](https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r01/access/csv/ibtracs.NA.list.v04r01.csv), [column definitions](https://www.ncei.noaa.gov/sites/default/files/2025-09/IBTrACS_v04r01_column_documentation.pdf).

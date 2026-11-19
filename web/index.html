@@ -4,7 +4,7 @@
 <meta name="theme-color" content="#112f40"><link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./vendor/leaflet.css"><link rel="stylesheet" href="./style.css">
 <script src="./vendor/leaflet.js" defer></script><script type="module" src="./app.mjs"></script></head>
 <body data-tool="{{TOOL_ID}}"><a class="skip" href="#explorer">Skip to explorer</a>
-<header><div class="wrap top"><a href="https://coolcode.ca/">← CoolCode</a><a href="#sources">Sources &amp; coverage</a></div></header>
+<header><div class="wrap top"><a href="https://coolcode.ca/">← CoolCode</a><a href="#harbours">Harbour records</a><a href="#sources">Sources &amp; coverage</a></div></header>
 <main class="wrap">
 <div class="intro"><div><p class="kicker">North Atlantic · Historical cyclone atlas</p><h1>{{TITLE}}</h1><p>Follow a storm across the Atlantic, compare its intensity, or find the tracks that passed closest to home.</p></div>
 <div class="count"><strong id="total">…</strong><span>archived storm tracks</span><small id="years">NOAA IBTrACS v04r01</small></div></div>
@@ -28,6 +28,22 @@
 <div class="table-wrap"><table><thead><tr><th>Track</th><th>Peak wind</th><th>Lowest pressure</th><th>Closest approach*</th></tr></thead><tbody id="summary"></tbody></table></div>
 <p id="footnote" class="muted"></p><a href="https://coolcode.ca/weatherarchive/">Explore Canadian station observations in Weather Archive ↗</a>
 </section></section></div>
+<section class="panel sources" id="harbours" aria-labelledby="harbour-title">
+<h2 id="harbour-title">Water levels during the storm</h2>
+<p>How far above the predicted tide did the water rise at each harbour? Compare readings from the same quarter hour and find the largest difference at each gauge.</p>
+<div id="harbour-controls" hidden>
+<div class="fields"><label>Storm window<select id="harbour-event"></select></label><button type="button" id="harbour-track">Show this storm’s track</button></div>
+<p class="muted" id="harbour-window"></p>
+<label for="harbour-time">Compare a time <output id="harbour-instant" for="harbour-time"></output></label>
+<input id="harbour-time" type="range" min="0" max="192" value="0">
+<div class="table-wrap"><table><thead><tr><th>CHS station</th><th>Difference at selected time</th><th>Largest difference in window</th><th>Matched times</th></tr></thead><tbody id="harbour-readings"></tbody></table></div></div>
+<p id="harbour-error" hidden>Harbour comparisons could not load. Use the Canadian Hydrographic Service station records below.</p>
+<p>Differences are observed water level minus tidal prediction at the same station and UTC timestamp. Only observations carrying the CHS good-quality flag enter the comparison. A gap has no usable pair. Weather and other non-tidal effects can contribute to the difference.</p>
+<p><a href="https://tides.gc.ca/en/web-services-offered-canadian-hydrographic-service">CHS web service and quality codes</a> · <a href="https://tides.gc.ca/en/licence-agreement">CHS licence</a></p>
+<aside class="chs-notice" aria-label="Canadian Hydrographic Service notice"><strong>This product is not to be used for navigation.</strong>
+<p>This product was made by or for the User Jeffrey Dyer and contains intellectual property (Data) of the Canadian Hydrographic Service of the Department of Fisheries and Oceans.</p>
+<p>The copyrights in the Data are and remain the property of His Majesty the King in Right of Canada and shall not be sold, licensed, leased, assigned or given to a third party.</p>
+<p>The incorporation of the Data in this product does not constitute an endorsement or an approval of this product by the Canadian Hydrographic Service, the Department of Fisheries and Oceans or His Majesty the King in Right of Canada.</p></aside></section>
 <section class="panel sources" id="sources"><h2>Inside the record</h2><p id="coverage"></p>
 <p>Tracks follow IBTrACS primary centres in the North Atlantic. The archive includes unnamed and post-tropical stages. Earlier records have sparser coverage. Short links between positions approximate the path, with breaks for gaps longer than 12 hours. Nearby results measure distance to the track centre. Wind, rain, surge and damage can extend far beyond it.</p>
 <p>Winds use the US agency one-minute sustained estimate in knots, and pressure is in hPa (numerically equal to millibars). A dash marks an unreported value. IBTrACS may interpolate between agency fixes. The chart compares elapsed time from each track’s first included position.</p>
